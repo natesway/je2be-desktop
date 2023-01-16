@@ -1,0 +1,34 @@
+name: Bootstrapping + releasing fedora rootfs
+on:
+  push:
+    branches: [ "main" ]
+  schedule:
+    - cron: "0 0 * * *" # run at the start of every day
+  workflow_dispatch:
+
+jobs:
+  build-37:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checking out repository code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Installing dependencies
+        run: sudo apt-get update && sudo apt-get install -y cmake
+
+      - name: Adding yum repos for dnf
+        run: |
+          git clone https://github.com/kbinani/je2be-desktop.git
+          cd je2be-desktop
+          git submodule update --init --recursive
+          cd Builds
+          cmake .. -DJE2BE_DESKTOP_INTEL_COMPILER=OFF
+          cmake --build . --target je2be-desktop --config Release --parallel
+          
+      - name: capture build artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: Artifacts
+          path: Build/
