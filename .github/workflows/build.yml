@@ -16,7 +16,7 @@ jobs:
           fetch-depth: 1
 
       - name: Installing dependencies
-        run: sudo apt-get update && sudo apt-get install -y cmake
+        run: sudo apt-get update && sudo apt-get install -y cmake libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev xorg-dev
 
       - name: Adding yum repos for dnf
         run: |
